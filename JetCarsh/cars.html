@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Автомобили JetCarsh — выберите подходящий каршеринг-авто">
+  <title>Авто | JetCarsh</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1 class="logo">JetCarsh</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="about.html">О нас</a></li>
+        <li><a href="cars.html">Авто</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+        <li><a href="register.php">Войти</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <h2 style="color: #e60000; text-align: center;">Наши автомобили</h2>
+  <div class="car-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin-top: 40px;">
+
+    <div class="car-card" data-car="Kia Rio" data-rate="6">
+      <img src="images/rio.jpg" alt="Kia Rio" style="width: 100%;">
+      <div style="padding: 20px;">
+        <h3>Kia Rio</h3>
+        <p>Цена: 6 руб/мин</p>
+        <p>Трансмиссия: Автомат</p>
+        <button class="btn rentBtn">Арендовать</button>
+      </div>
+    </div>
+
+    <div class="car-card" data-car="Hyundai Solaris" data-rate="6.5">
+      <img src="images/solaris.jpg" alt="Hyundai Solaris" style="width: 100%;">
+      <div style="padding: 20px;">
+        <h3>Hyundai Solaris</h3>
+        <p>Цена: 6.5 руб/мин</p>
+        <p>Трансмиссия: Автомат</p>
+        <button class="btn rentBtn">Арендовать</button>
+      </div>
+    </div>
+
+    <div class="car-card" data-car="Skoda Rapid" data-rate="7">
+      <img src="images/rapid.jpg" alt="Skoda Rapid" style="width: 100%;">
+      <div style="padding: 20px;">
+        <h3>Skoda Rapid</h3>
+        <p>Цена: 7 руб/мин</p>
+        <p>Трансмиссия: Механика</p>
+        <button class="btn rentBtn">Арендовать</button>
+      </div>
+    </div>
+
+    <div class="car-card" data-car="Toyota Camry" data-rate="10">
+      <img src="images/camry.jpg" alt="Toyota Camry" style="width: 100%;">
+      <div style="padding: 20px;">
+        <h3>Toyota Camry</h3>
+        <p>Цена: 10 руб/мин</p>
+        <p>Трансмиссия: Автомат</p>
+        <button class="btn rentBtn">Арендовать</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Модальное окно аренды -->
+<div id="rentModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:999;">
+  <div style="background:#111; padding:30px; max-width:400px; width:90%; border:2px solid #e60000; border-radius:10px; position:relative;">
+    <button id="closeModal" class="btn" style="position:absolute; top:10px; right:10px; font-size:14px;">X</button>
+    <h2 style="color:#e60000;">Аренда автомобиля</h2>
+    <form id="rentForm">
+      <p>Модель: <strong id="carName"></strong></p>
+      <label>Время аренды (мин):</label>
+      <input type="number" id="minutes" name="minutes" value="30" min="1" required style="width:100%;padding:8px;margin:5px 0;">
+      <p>Цена за минуту: <span id="rateDisplay">0</span> руб</p>
+      <p>Итого: <strong id="totalPrice">0</strong> руб</p>
+      <label>Имя:</label>
+      <input type="text" name="name" required style="width:100%;padding:8px;margin:5px 0;">
+      <label>Email:</label>
+      <input type="email" name="email" required style="width:100%;padding:8px;margin:5px 0;">
+      <button type="submit" class="btn" style="width:100%; margin-top:10px;">Отправить</button>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2025 JetCarsh. Все права защищены.</p>
+  </div>
+</footer>
+
+<script>
+  const rentBtns = document.querySelectorAll('.rentBtn');
+  const modal = document.getElementById('rentModal');
+  const closeModal = document.getElementById('closeModal');
+  const carName = document.getElementById('carName');
+  const rateDisplay = document.getElementById('rateDisplay');
+  const totalPrice = document.getElementById('totalPrice');
+  const minutesInput = document.getElementById('minutes');
+  let currentRate = 0;
+
+  rentBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.car-card');
+      const car = card.dataset.car;
+      currentRate = parseFloat(card.dataset.rate);
+      carName.textContent = car;
+      rateDisplay.textContent = currentRate;
+      minutesInput.value = 30;
+      updateTotal();
+      modal.style.display = 'flex';
+    });
+  });
+
+  minutesInput.addEventListener('input', updateTotal);
+
+  function updateTotal() {
+    const minutes = parseInt(minutesInput.value) || 0;
+    const total = (minutes * currentRate).toFixed(2);
+    totalPrice.textContent = total.replace('.', ',');
+  }
+
+  closeModal.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  window.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  document.getElementById('rentForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert("Заявка отправлена! Мы свяжемся с вами.");
+    modal.style.display = 'none';
+    this.reset();
+  });
+</script>
+
+</body>
+</html>
